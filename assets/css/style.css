@@ -1,0 +1,30 @@
+h1 {
+    margin-bottom: 8px;
+    font-size: 50px;
+    font-family: 'Lilita One', cursive;
+}
+
+h3 {
+    font-size: 20px;
+}
+label {
+
+    margin-bottom: 3px;
+    font-family: 'Lilita One', cursive;
+}
+
+.card-header {
+    background-color: #2ABEFF;
+    font-size: 20px;
+
+    color: white;
+    font-family: 'Lilita One', cursive;
+}
+
+th[scope="col"] {
+    font-family: 'Lilita One', cursive;
+}
+
+tbody {
+    font-family: Arial, Helvetica, sans-serif;
+}
