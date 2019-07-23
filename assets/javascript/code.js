@@ -13,6 +13,12 @@
 
   var database = firebase.database();
 
+
+// "#add-train" onclick: Pull user input values from the form.
+//                       Create object variable newSchedule including all user input
+//                       Push it to Firebase
+//                       Empty the form.
+
   $("#add-train").on("click", function(event){
     event.preventDefault();
 
@@ -21,21 +27,11 @@
     var fTime = $("#first-train").val().trim();
     var freq = $("#frequency").val().trim();
 
-
-    var firstTimeConverted = moment(fTime, "HH:mm").subtract(1, "years");
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-    var tRemainder = diffTime % freq;
- 
-    var tMinutesTillTrain = freq - tRemainder;
-    var nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm");
-
     var newSchedule = {
         name: trainName,
         destination: dest,
         first: fTime,
         frequency: freq,
-        next: nextTrain,
-        mAway: tMinutesTillTrain
     };
 
     database.ref().push(newSchedule);    
@@ -46,17 +42,25 @@
     var freq = $("#frequency").val("");
   });
 
+// When new child is added to database:
+//  - pull child data (name, destination, first train time and frequency) and store it into the variable.
+//  - using first time and frequency variable, calculate next train time and minutes away with moment library.
+//  - minutes away = freq - (current time - first train time) % freq
+//  - next train = current time + minutes away
   database.ref().on("child_added", function(childSnapshot) {
 
     var trainName = childSnapshot.val().name;
     var dest = childSnapshot.val().destination;
     var fTime = childSnapshot.val().first;
     var freq = childSnapshot.val().frequency;
-    var nextTrain = childSnapshot.val().next;
-    var tMinutesTillTrainv = childSnapshot.val().mAway;
-    // Store everything into a variable.
 
-  
+    // subtract 1 year from first train time to make sure the time is less than current time
+    var firstTimeConverted = moment(fTime, "HH:mm").subtract(1, "years");
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    var tRemainder = diffTime % freq;
+ 
+    var tMinutesTillTrain = freq - tRemainder;
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm");
 
     // Create the new row
     var newRow = $("<tr>").append(
@@ -65,7 +69,7 @@
       $("<td>").text(fTime),
       $("<td>").text(freq),
       $("<td>").text(nextTrain),
-      $("<td>").text(tMinutesTillTrainv)
+      $("<td>").text(tMinutesTillTrain)
     );
   
     // Append the new row to the table
